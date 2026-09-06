@@ -34,4 +34,8 @@ Route::middleware('auth')->group(function () {
 
 Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
 
+Route::get('/blog/{any?}', function () {
+    return view('blog');
+})->where('any', '.*');
+
 require __DIR__.'/auth.php';
