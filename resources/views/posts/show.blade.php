@@ -21,10 +21,10 @@
                 <div class="mt-4 text-gray-800 whitespace-pre-line">{{ $post->content }}</div>
 
                 @can('update', $post)
-                    <div class="mt-6 flex space-x-3">
+                    <div class="mt-6 flex items-center space-x-3">
                         <a href="{{ route('posts.edit', $post) }}" class="text-sm text-indigo-600 hover:underline">{{ __('Edit') }}</a>
 
-                        <form method="POST" action="{{ route('posts.destroy', $post) }}" onsubmit="return confirm('{{ __('Are you sure?') }}')">
+                        <form method="POST" action="{{ route('posts.destroy', $post) }}" onsubmit="return confirm('{{ __('Are you sure?') }}')" class="m-0">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="text-sm text-red-600 hover:underline">{{ __('Delete') }}</button>
