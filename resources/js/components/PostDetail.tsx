@@ -37,8 +37,14 @@ export default function PostDetail({ currentUser }: Props) {
         <div className="space-y-6">
             <div className="bg-white p-6 shadow-sm rounded-lg">
                 <h2 className="text-xl font-semibold">{post.title}</h2>
-                <p className="text-sm text-gray-500 mt-1">
-                    by {post.user.name} · {post.created_at}
+                <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                    by {post.user.name}
+                    {post.user.role === 'admin' && (
+                        <span className="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                            Admin
+                        </span>
+                    )}
+                    · {post.created_at}
                 </p>
                 <div className="mt-4 whitespace-pre-line">{post.content}</div>
 

@@ -3,9 +3,10 @@
 use App\Http\Controllers\Api\CommentController;
 use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Resources\UserResource;
 
-Route::get('/user', function () {
-    return request()->user();
+Route::get('/user', function (Request $request) {
+    return new UserResource($request->user());
 })->middleware('auth:sanctum');
 
 Route::get('/posts', [PostController::class, 'index']);

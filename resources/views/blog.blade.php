@@ -7,7 +7,11 @@
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.tsx'])
 </head>
-<body class="bg-gray-100">
-    <div id="app"></div>
+<body class="font-sans antialiased">
+    <div class="min-h-screen bg-gray-100">
+        @include('layouts.navigation')
+
+        <div id="app"></div>
+    </div>
 </body>
 </html>

@@ -2,12 +2,14 @@ export interface User {
     id: number;
     name: string;
     email?: string;
+    role: 'user' | 'admin';
 }
 
 export interface Comment {
     id: number;
     comment: string;
     author_name: string;
+    author_role: 'user' | 'admin' | null;
     is_guest: boolean;
     can_delete: boolean;
     created_at: string;

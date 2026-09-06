@@ -48,8 +48,14 @@ export default function CommentList({ post, onCommentAdded, currentUser }: Props
                 {post.comments.map((c) => (
                     <div key={c.id} className="border-b pb-3">
                         <div className="flex justify-between items-start">
-                            <p className="text-sm font-semibold text-gray-700">
-                                {c.author_name} {c.is_guest && '(guest)'}
+                            <p className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                {c.author_name}
+                                {c.is_guest && <span className="text-gray-400 font-normal">(guest)</span>}
+                                {c.author_role === 'admin' && (
+                                    <span className="bg-indigo-100 text-indigo-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                                        Admin
+                                    </span>
+                                )}
                             </p>
                             {c.can_delete && (
                                 <button

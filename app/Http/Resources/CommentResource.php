@@ -13,6 +13,7 @@ class CommentResource extends JsonResource
             'id' => $this->id,
             'comment' => $this->comment,
             'author_name' => $this->user->name ?? $this->guest_name,
+            'author_role' => $this->user->role ?? null,
             'is_guest' => is_null($this->user_id),
             'can_delete' => $request->user()?->can('delete', $this->resource) ?? false,
             'created_at' => $this->created_at->diffForHumans(),
