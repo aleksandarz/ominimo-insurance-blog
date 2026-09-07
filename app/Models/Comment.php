@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -12,7 +14,8 @@ class Comment extends Model
 {
     use HasFactory;
 
-    const string TABLE = "comments";
+    const string TABLE = 'comments';
+
     protected $table = self::TABLE;
 
     public function post(): BelongsTo

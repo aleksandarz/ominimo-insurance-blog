@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -13,7 +15,8 @@ class Post extends Model
 {
     use HasFactory;
 
-    const string TABLE = "posts";
+    const string TABLE = 'posts';
+
     protected $table = self::TABLE;
 
     public function user(): BelongsTo

@@ -1,30 +1,32 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Fiksni admin nalog da uvek znaš kako da se uloguješ
-        $admin = User::factory()->create([
+        $admin = User::factory()->admin()->create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
-            'role' => 'admin',
+            'password' => Hash::make('AdminPass123!'),
         ]);
 
-        // 9 običnih korisnika
-        $users = User::factory(9)->create();
+        $users = User::factory(9)->create()->push($admin);
 
-        // Svaki korisnik (uključujući admina) dobija 2-4 posta, svaki post 0-5 komentara
-        $users->push($admin)->each(function (User $user) {
+        $users->each(function (User $user) use ($users): void {
             Post::factory(rand(2, 4))
                 ->for($user)
-                ->has(\App\Models\Comment::factory()->count(rand(0, 5)))
+                ->has(Comment::factory()->count(rand(0, 5)))
+                ->recycle($users)
                 ->create();
         });
     }

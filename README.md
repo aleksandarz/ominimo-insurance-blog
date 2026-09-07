@@ -14,7 +14,7 @@ Built as part of the Ominimo Insurance BE developer interview assignment.
 - **Two frontends**:
   - Server-rendered Blade views (`/posts`)
   - A React + TypeScript SPA consuming a JSON API (`/blog`), authenticated via Laravel Sanctum
-- **Tests** — 44 PHPUnit tests (Unit + Feature) covering CRUD, validation, and authorization rules
+- **Tests** — 53 PHPUnit tests (Unit + Feature) covering CRUD, validation, and authorization rules
 
 ## Tech Stack
 
@@ -29,7 +29,7 @@ Built as part of the Ominimo Insurance BE developer interview assignment.
 
 ## Requirements
 
-- PHP 8.2+
+- PHP 8.3+
 - Composer
 - Node.js & npm
 - MySQL

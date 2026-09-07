@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;
@@ -9,16 +11,13 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    public function register(): void
-    {
-        //
-    }
+    public function register(): void {}
 
     public function boot(): void
     {
-        RateLimiter::for('posts-write', function (Request $request) {
+        RateLimiter::for('posts-write', function (Request $request): Limit {
             $identifier = $request->user()?->id ?: $request->ip();
-            $key = $identifier . '|' . $request->userAgent();
+            $key = $identifier.'|'.$request->userAgent();
 
             return Limit::perMinute(30)->by($key);
         });

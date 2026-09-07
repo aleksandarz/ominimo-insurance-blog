@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
+use App\Enums\UserRole;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -109,7 +112,7 @@ class PostTest extends TestCase
 
     public function test_admin_can_delete_any_post(): void
     {
-        $admin = User::factory()->create(['role' => 'admin']);
+        $admin = User::factory()->create(['role' => UserRole::ADMIN]);
         $post = Post::factory()->create();
 
         $response = $this->actingAs($admin)->delete(route('posts.destroy', $post));

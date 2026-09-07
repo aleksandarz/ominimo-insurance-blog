@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreCommentRequest extends FormRequest
 {
@@ -15,7 +18,12 @@ class StoreCommentRequest extends FormRequest
     {
         return [
             'comment' => ['required', 'string', 'max:1000'],
-            'guest_name' => ['required_if:is_guest,true', 'nullable', 'string', 'max:64'],
+            'guest_name' => [
+                Rule::requiredIf(fn (): bool => ! $this->user()),
+                'nullable',
+                'string',
+                'max:64',
+            ],
         ];
     }
 }

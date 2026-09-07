@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -18,7 +21,7 @@ class CommentFactory extends Factory
      */
     public function definition(): array
     {
-        $isGuest = fake()->boolean(30); // 30% šansa da je gost komentar
+        $isGuest = fake()->boolean(30);
 
         return [
             'post_id' => Post::factory(),

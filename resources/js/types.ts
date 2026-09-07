@@ -9,7 +9,7 @@ export interface Comment {
     id: number;
     comment: string;
     author_name: string;
-    author_role: 'user' | 'admin' | null;
+    author_role: 'user' | 'admin' | 'guest';
     is_guest: boolean;
     can_delete: boolean;
     created_at: string;

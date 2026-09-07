@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Feature;
 
 use App\Models\Comment;
@@ -45,6 +47,19 @@ class CommentTest extends TestCase
             'user_id' => $user->id,
             'guest_name' => null,
         ]);
+    }
+
+    public function test_guest_cannot_comment_without_a_name(): void
+    {
+        $post = Post::factory()->create();
+
+        $response = $this->from(route('posts.show', $post))
+            ->post(route('comments.store', $post), [
+                'comment' => 'Anonymous attempt.',
+            ]);
+
+        $response->assertSessionHasErrors('guest_name');
+        $this->assertDatabaseCount('comments', 0);
     }
 
     public function test_comment_author_can_delete_own_comment(): void

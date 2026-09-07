@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Enums;
 
-enum UserRole: string {
+enum UserRole: string
+{
     case ADMIN = 'admin';
     case GUEST = 'guest';
     case USER = 'user';
