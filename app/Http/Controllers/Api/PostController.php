@@ -9,6 +9,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
+use App\Support\PostCache;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
@@ -17,9 +18,7 @@ class PostController extends Controller
 {
     public function index(): AnonymousResourceCollection
     {
-        $posts = Post::with('user')->withCount('comments')->latest()->paginate(10);
-
-        return PostResource::collection($posts);
+        return PostResource::collection(PostCache::feed());
     }
 
     public function store(StorePostRequest $request): PostResource
@@ -31,9 +30,7 @@ class PostController extends Controller
 
     public function show(Post $post): PostResource
     {
-        $post->load(['user', 'comments.user']);
-
-        return new PostResource($post);
+        return new PostResource(PostCache::post($post->id));
     }
 
     public function update(UpdatePostRequest $request, Post $post): PostResource

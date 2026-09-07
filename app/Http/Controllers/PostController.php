@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
+use App\Support\PostCache;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\View\View;
@@ -15,9 +16,7 @@ class PostController extends Controller
 {
     public function index(): View
     {
-        $posts = Post::with('user')->latest()->paginate(10);
-
-        return view('posts.index', compact('posts'));
+        return view('posts.index', ['posts' => PostCache::feed()]);
     }
 
     public function create(): View
@@ -35,9 +34,7 @@ class PostController extends Controller
 
     public function show(Post $post): View
     {
-        $post->load('comments.user');
-
-        return view('posts.show', compact('post'));
+        return view('posts.show', ['post' => PostCache::post($post->id)]);
     }
 
     public function edit(Post $post): View

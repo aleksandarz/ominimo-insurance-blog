@@ -6,15 +6,18 @@ import { Post } from '../types';
 export default function PostList() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        axios.get('/api/posts').then((res) => {
-            setPosts(res.data.data);
-            setLoading(false);
-        });
+        axios
+            .get('/api/posts')
+            .then((res) => setPosts(res.data.data))
+            .catch(() => setError('Could not load posts. Please try again.'))
+            .finally(() => setLoading(false));
     }, []);
 
     if (loading) return <p className="text-gray-500">Loading...</p>;
+    if (error) return <p className="text-red-600">{error}</p>;
 
     return (
         <div className="space-y-4">

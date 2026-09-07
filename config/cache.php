@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\Comment;
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 return [
@@ -129,8 +133,17 @@ return [
     | storage. By default, no PHP classes will be unserialized from your
     | cache to prevent gadget chain attacks if your APP_KEY is leaked.
     |
+    | The models below are allow-listed so App\Support\PostCache can store the
+    | post feed and post detail as Eloquent objects. Only the application's own
+    | models are listed — never `true`.
+    |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => [
+        Collection::class,
+        Post::class,
+        User::class,
+        Comment::class,
+    ],
 
 ];

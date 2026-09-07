@@ -11,10 +11,9 @@ Built as part of the Ominimo Insurance BE developer interview assignment.
 - **Comments** — authenticated users and guests can comment; a comment can be deleted by its author, the post owner (moderation), or an admin
 - **Authorization** — enforced via Laravel Policies (`PostPolicy`, `CommentPolicy`) and route middleware
 - **Role-based access control** — an `admin` role can delete any post or comment
-- **Two frontends**:
-  - Server-rendered Blade views (`/posts`)
-  - A React + TypeScript SPA consuming a JSON API (`/blog`), authenticated via Laravel Sanctum
-- **Tests** — 53 PHPUnit tests (Unit + Feature) covering CRUD, validation, and authorization rules
+- **Two frontends, on purpose** — the same blog is served both as server-rendered Blade views (`/posts`) and as a React + TypeScript SPA over a JSON API (`/blog`, Sanctum cookie auth). React was an optional part of the brief; both paths are kept so the classic server-rendered flow and the API-driven SPA flow can be seen side by side against one backend (shared policies, form requests, and cache layer).
+- **Caching** — a read-through cache layer (`app/Support/PostCache.php`) for the post feed and individual posts, invalidated by model observers (see [Caching](#caching) below)
+- **Tests** — PHPUnit (Unit + Feature) covering CRUD, validation, authorization, and cache invalidation
 
 ## Tech Stack
 
@@ -128,6 +127,17 @@ php artisan test
 - **API routes** live in `routes/api.php`, authenticated via Sanctum (cookie-based, since the React SPA is served from the same domain).
 - **Authorization logic** is centralized in `app/Policies/PostPolicy.php` and `app/Policies/CommentPolicy.php` — both the Blade and API controllers call the same policies, so authorization rules are defined once.
 - **React source** lives in `resources/js/`, entry point `app.tsx`, served from the `blog.blade.php` view.
+- **The post list is deliberately implemented twice** — server-rendered (`GET /posts`) and via the JSON API the SPA consumes (`GET /api/posts`). Since the React frontend was an optional add-on, both are kept to demonstrate the server-rendered and the API/SPA approaches. They run through the same form requests, policies, and `PostCache`.
+
+## Caching
+
+The post feed and individual posts are read through `app/Support/PostCache.php`, a small cache layer shared by the Blade and API controllers (default TTL: 15 minutes, `CACHE_STORE` from `.env`).
+
+- **Feed** — cached per page under a *versioned* key (`posts:feed:v{n}:pp{perPage}:p{page}`). Any post write bumps the version number, so every cached page is invalidated at once. This gives tag-style invalidation on cache stores that don't support tags, including the default `database` store.
+- **Single post** — cached per id (`posts:show:{id}`) and cleared precisely when that post, or one of its comments, changes.
+- **Invalidation** is driven by `App\Observers\PostObserver` and `App\Observers\CommentObserver` (wired via `#[ObservedBy]` on the models), so it happens automatically on every create/update/delete regardless of which controller triggered it.
+- **Caching is done at the query layer, not on the HTTP response.** `PostResource` adds per-user fields (`can.update`, `can.delete`), so the transformation still runs on every request and authorization is never served stale or leaked between users. For the same reason the API responses are not given a shared `Cache-Control`.
+- For production, point `CACHE_STORE` at Redis; the layer is store-agnostic and needs no code change.
 
 ## Deployment
 
