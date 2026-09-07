@@ -32,7 +32,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
-Route::post('/posts/{post}/comments', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/posts/{post}/comments', [CommentController::class, 'store'])
+    ->middleware('throttle:posts-write')
+    ->name('comments.store');
 
 Route::get('/blog/{any?}', function () {
     return view('blog');

@@ -13,11 +13,12 @@ class CommentController extends Controller
     {
         $data = $request->validated();
 
-        $post->comments()->create([
+        $comment = $post->comments()->create([
             'comment' => $data['comment'],
-            'user_id' => auth()->id(),
             'guest_name' => auth()->check() ? null : $data['guest_name'],
         ]);
+        $comment->user()->associate(auth()->user());
+        $comment->save();
 
         return redirect()->route('posts.show', $post)
             ->with('success', 'Comment added.');

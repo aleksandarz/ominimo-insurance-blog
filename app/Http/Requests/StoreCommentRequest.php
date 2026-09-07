@@ -15,7 +15,7 @@ class StoreCommentRequest extends FormRequest
     {
         return [
             'comment' => ['required', 'string', 'max:1000'],
-            'guest_name' => ['required_if:is_guest,true', 'nullable', 'string', 'max:255'],
+            'guest_name' => ['required_if:is_guest,true', 'nullable', 'string', 'max:64'],
         ];
     }
 }

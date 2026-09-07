@@ -91,9 +91,9 @@ Built as part of the Ominimo Insurance BE developer interview assignment.
    **Seeded login:**
    | Email | Password | Role |
    |---|---|---|
-   | admin@example.com | password | admin |
+   | admin@example.com | AdminPass123! | admin |
 
-   All other seeded users also use the password `password`.
+   All other seeded users use the password `password`.
 
 6. **Build frontend assets**
 
