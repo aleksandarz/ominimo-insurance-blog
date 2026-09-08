@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CommentList from './CommentList';
+import FlashMessage from './FlashMessage';
 import { Post, Comment, User } from '../types';
+import { flash, takeFlash } from '../flash';
 
 interface Props {
     currentUser: User | null;
@@ -12,6 +14,11 @@ export default function PostDetail({ currentUser }: Props) {
     const { id } = useParams();
     const navigate = useNavigate();
     const [post, setPost] = useState<Post | null>(null);
+    const [notice, setNotice] = useState<string | null>(null);
+
+    useEffect(() => {
+        setNotice(takeFlash());
+    }, []);
 
     useEffect(() => {
         axios.get(`/api/posts/${id}`).then((res) => setPost(res.data.data));
@@ -22,20 +29,29 @@ export default function PostDetail({ currentUser }: Props) {
     const handleCommentAdded = (newComment: Comment | null, deletedId?: number) => {
         if (deletedId) {
             setPost({ ...post, comments: post.comments.filter((c) => c.id !== deletedId) });
+            setNotice('Comment deleted.');
         } else if (newComment) {
             setPost({ ...post, comments: [newComment, ...post.comments] });
+            setNotice('Comment added.');
         }
     };
 
     const deletePost = async () => {
         if (!confirm('Are you sure?')) return;
-        await axios.delete(`/api/posts/${post.id}`);
-        navigate('/');
+        try {
+            await axios.delete(`/api/posts/${post.id}`);
+            flash('Post deleted successfully.');
+            navigate('/');
+        } catch {
+            alert('Could not delete the post.');
+        }
     };
 
     return (
-        <div className="space-y-6">
-            <div className="bg-white p-6 shadow-sm rounded-lg">
+        <div className="max-w-2xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            {notice && <FlashMessage>{notice}</FlashMessage>}
+
+            <div className="bg-white p-6 shadow-sm sm:rounded-lg">
                 <h2 className="text-xl font-semibold">{post.title}</h2>
                 <p className="text-sm text-gray-500 mt-1 flex items-center gap-2">
                     by {post.user.name}

@@ -28,23 +28,29 @@ export default function CommentList({ post, onCommentAdded, currentUser }: Props
         } catch (err: any) {
             if (err.response?.status === 422) {
                 setErrors(err.response.data.errors);
+            } else {
+                setErrors({ comment: ['Something went wrong. Please try again.'] });
             }
         }
     };
 
     const deleteComment = async (commentId: number) => {
         if (!confirm('Are you sure?')) return;
-        await axios.delete(`/api/comments/${commentId}`);
-        onCommentAdded(null, commentId);
+        try {
+            await axios.delete(`/api/comments/${commentId}`);
+            onCommentAdded(null, commentId);
+        } catch {
+            alert('Could not delete the comment.');
+        }
     };
 
     return (
-        <div className="bg-white p-6 shadow-sm rounded-lg mt-6">
-            <h3 className="font-semibold text-lg mb-4">
-                Comments ({post.comments.length})
-            </h3>
+        <div className="bg-white p-6 shadow-sm sm:rounded-lg">
+            <h3 className="font-semibold text-lg mb-4">Comments ({post.comments.length})</h3>
 
             <div className="space-y-4">
+                {post.comments.length === 0 && <p className="text-gray-500 text-sm">No comments yet.</p>}
+
                 {post.comments.map((c) => (
                     <div key={c.id} className="border-b pb-3">
                         <div className="flex justify-between items-start">
@@ -67,6 +73,7 @@ export default function CommentList({ post, onCommentAdded, currentUser }: Props
                             )}
                         </div>
                         <p className="text-gray-600 mt-1">{c.comment}</p>
+                        <p className="text-xs text-gray-400 mt-1">{c.created_at}</p>
                     </div>
                 ))}
             </div>
@@ -82,9 +89,7 @@ export default function CommentList({ post, onCommentAdded, currentUser }: Props
                             className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                             required
                         />
-                        {errors.guest_name && (
-                            <p className="text-red-600 text-sm mt-1">{errors.guest_name[0]}</p>
-                        )}
+                        {errors.guest_name && <p className="text-red-600 text-sm mt-1">{errors.guest_name[0]}</p>}
                     </div>
                 )}
 
@@ -97,9 +102,7 @@ export default function CommentList({ post, onCommentAdded, currentUser }: Props
                         className="mt-1 block w-full border-gray-300 rounded-md shadow-sm"
                         required
                     />
-                    {errors.comment && (
-                        <p className="text-red-600 text-sm mt-1">{errors.comment[0]}</p>
-                    )}
+                    {errors.comment && <p className="text-red-600 text-sm mt-1">{errors.comment[0]}</p>}
                 </div>
 
                 <button type="submit" className="px-4 py-2 bg-gray-800 text-white rounded-md text-sm">

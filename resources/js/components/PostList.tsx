@@ -1,36 +1,80 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { Post } from '../types';
+import { Paginated, Post } from '../types';
+import { takeFlash } from '../flash';
+import FlashMessage from './FlashMessage';
 
 export default function PostList() {
     const [posts, setPosts] = useState<Post[]>([]);
+    const [page, setPage] = useState(1);
+    const [lastPage, setLastPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [notice, setNotice] = useState<string | null>(null);
 
     useEffect(() => {
-        axios
-            .get('/api/posts')
-            .then((res) => setPosts(res.data.data))
-            .catch(() => setError('Could not load posts. Please try again.'))
-            .finally(() => setLoading(false));
+        setNotice(takeFlash());
     }, []);
 
-    if (loading) return <p className="text-gray-500">Loading...</p>;
-    if (error) return <p className="text-red-600">{error}</p>;
+    useEffect(() => {
+        setLoading(true);
+        axios
+            .get<Paginated<Post>>('/api/posts', { params: { page } })
+            .then((res) => {
+                setPosts(res.data.data);
+                setLastPage(res.data.meta.last_page);
+                setError(null);
+            })
+            .catch(() => setError('Could not load posts. Please try again.'))
+            .finally(() => setLoading(false));
+    }, [page]);
+
+    const goToPage = (target: number) => {
+        setPage(target);
+        window.scrollTo({ top: 0 });
+    };
 
     return (
-        <div className="space-y-4">
-            {posts.map((post) => (
-                <div key={post.id} className="bg-white p-6 shadow-sm rounded-lg">
-                    <Link to={`/posts/${post.id}`} className="text-lg font-semibold hover:underline">
-                        {post.title}
-                    </Link>
-                    <p className="text-sm text-gray-500 mt-1">
-                        by {post.user.name} · {post.created_at}
-                    </p>
+        <div className="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            {notice && <FlashMessage>{notice}</FlashMessage>}
+
+            {loading && <p className="text-gray-500">Loading...</p>}
+            {error && <p className="text-red-600">{error}</p>}
+
+            {!loading && !error && posts.length === 0 && <p className="text-gray-500">No posts yet.</p>}
+
+            {!loading &&
+                !error &&
+                posts.map((post) => (
+                    <div key={post.id} className="bg-white p-6 shadow-sm sm:rounded-lg">
+                        <Link to={`/posts/${post.id}`} className="text-lg font-semibold hover:underline">
+                            {post.title}
+                        </Link>
+                        <p className="text-sm text-gray-500 mt-1">
+                            by {post.user.name} · {post.created_at}
+                        </p>
+                        <p className="text-gray-700 mt-3">
+                            {post.content.length > 150 ? `${post.content.slice(0, 150).trimEnd()}...` : post.content}
+                        </p>
+                    </div>
+                ))}
+
+            {!loading && !error && lastPage > 1 && (
+                <div className="flex justify-center gap-1">
+                    {Array.from({ length: lastPage }, (_, i) => i + 1).map((target) => (
+                        <button
+                            key={target}
+                            onClick={() => goToPage(target)}
+                            className={`px-3 py-1 rounded text-sm ${
+                                target === page ? 'bg-gray-800 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
+                            }`}
+                        >
+                            {target}
+                        </button>
+                    ))}
                 </div>
-            ))}
+            )}
         </div>
     );
 }

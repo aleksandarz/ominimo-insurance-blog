@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import PostList from './components/PostList';
 import PostDetail from './components/PostDetail';
 import PostForm from './components/PostForm';
@@ -9,6 +9,33 @@ import { User } from './types';
 
 axios.defaults.withCredentials = true;
 axios.defaults.withXSRFToken = true;
+
+function PageHeader({ currentUser }: { currentUser: User | null }) {
+    const { pathname } = useLocation();
+
+    let title = 'Blog Posts';
+    if (pathname === '/posts/create') {
+        title = 'Create New Post';
+    } else if (pathname.endsWith('/edit')) {
+        title = 'Edit Post';
+    }
+
+    return (
+        <header className="bg-white shadow">
+            <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                <h2 className="font-semibold text-xl text-gray-800 leading-tight">{title}</h2>
+                {currentUser && pathname === '/' && (
+                    <Link
+                        to="/posts/create"
+                        className="inline-flex items-center px-4 py-2 bg-gray-800 rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
+                    >
+                        New Post
+                    </Link>
+                )}
+            </div>
+        </header>
+    );
+}
 
 function App() {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -27,23 +54,21 @@ function App() {
 
     return (
         <BrowserRouter basename="/blog">
-            <div className="max-w-4xl mx-auto p-6">
-                <div className="flex justify-between items-center mb-6">
-                    <Link to="/" className="text-xl font-semibold">Blog</Link>
-                    {currentUser && (
-                        <Link to="/posts/create" className="text-sm px-4 py-2 bg-gray-800 text-white rounded-md">
-                            New Post
-                        </Link>
-                    )}
-                </div>
-
+            <PageHeader currentUser={currentUser} />
+            <main className="py-12">
                 <Routes>
                     <Route path="/" element={<PostList />} />
-                    <Route path="/posts/create" element={<PostForm />} />
+                    <Route
+                        path="/posts/create"
+                        element={currentUser ? <PostForm /> : <Navigate to="/" replace />}
+                    />
                     <Route path="/posts/:id" element={<PostDetail currentUser={currentUser} />} />
-                    <Route path="/posts/:id/edit" element={<PostForm />} />
+                    <Route
+                        path="/posts/:id/edit"
+                        element={currentUser ? <PostForm /> : <Navigate to="/" replace />}
+                    />
                 </Routes>
-            </div>
+            </main>
         </BrowserRouter>
     );
 }
