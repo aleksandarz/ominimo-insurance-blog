@@ -53,6 +53,14 @@ export default function PostForm() {
 
     return (
         <div className="max-w-2xl mx-auto sm:px-6 lg:px-8">
+            <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
+            >
+                ← Back
+            </button>
+
             <div className="bg-white p-6 shadow-sm sm:rounded-lg">
                 {formError && <p className="text-red-600 text-sm mb-4">{formError}</p>}
 

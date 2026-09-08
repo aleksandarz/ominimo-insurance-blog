@@ -5,6 +5,7 @@ import { Paginated, Post } from '../types';
 import { takeFlash } from '../flash';
 import FlashMessage from './FlashMessage';
 import Pagination from './Pagination';
+import BackToTop from './BackToTop';
 
 export default function PostList() {
     const [posts, setPosts] = useState<Post[]>([]);
@@ -71,6 +72,8 @@ export default function PostList() {
                     onChange={goToPage}
                 />
             )}
+
+            <BackToTop />
         </div>
     );
 }

@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import CommentList from './CommentList';
 import FlashMessage from './FlashMessage';
+import BackToTop from './BackToTop';
 import { Post, Comment, User } from '../types';
 import { flash, takeFlash } from '../flash';
 
@@ -49,6 +50,14 @@ export default function PostDetail({ currentUser }: Props) {
 
     return (
         <div className="max-w-2xl mx-auto sm:px-6 lg:px-8 space-y-6">
+            <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900"
+            >
+                ← Back
+            </button>
+
             {notice && <FlashMessage>{notice}</FlashMessage>}
 
             <div className="bg-white p-6 shadow-sm sm:rounded-lg">
@@ -77,6 +86,8 @@ export default function PostDetail({ currentUser }: Props) {
             </div>
 
             <CommentList post={post} onCommentAdded={handleCommentAdded} currentUser={currentUser} />
+
+            <BackToTop />
         </div>
     );
 }

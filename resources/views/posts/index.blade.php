@@ -40,4 +40,6 @@
             {{ $posts->links() }}
         </div>
     </div>
+
+    <x-back-to-top />
 </x-app-layout>

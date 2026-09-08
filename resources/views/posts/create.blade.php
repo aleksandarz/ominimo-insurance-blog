@@ -7,6 +7,10 @@
 
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
+            <a href="{{ url()->previous() }}" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4">
+                &larr; {{ __('Back') }}
+            </a>
+
             <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                 <form method="POST" action="{{ route('posts.store') }}">
                     @csrf

@@ -8,6 +8,10 @@
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
+            <a href="{{ url()->previous() }}" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+                &larr; {{ __('Back') }}
+            </a>
+
             @if (session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
                     {{ session('success') }}
@@ -83,4 +87,6 @@
             </div>
         </div>
     </div>
+
+    <x-back-to-top />
 </x-app-layout>
