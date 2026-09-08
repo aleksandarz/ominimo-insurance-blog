@@ -1,0 +1,26 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - db-data:/var/www/html/database/data
+      - storage-data:/var/www/html/storage
+    environment:
+      - APP_NAME=OminimoInsuranceBlog
+      - APP_ENV=production
+      - APP_DEBUG=false
+      - APP_URL=http://localhost:8080
+      - DB_CONNECTION=sqlite
+      - DB_DATABASE=/var/www/html/database/data/database.sqlite
+      - SESSION_DRIVER=database
+      - CACHE_STORE=database
+      - QUEUE_CONNECTION=database
+      - LOG_CHANNEL=stderr
+    restart: unless-stopped
+
+volumes:
+  db-data:
+  storage-data:

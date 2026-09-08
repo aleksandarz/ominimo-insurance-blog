@@ -135,10 +135,25 @@ The post feed and individual posts are read through `app/Support/PostCache.php`,
 
 - **Feed** — cached per page under a *versioned* key (`posts:feed:v{n}:pp{perPage}:p{page}`). Any post write bumps the version number, so every cached page is invalidated at once. This gives tag-style invalidation on cache stores that don't support tags, including the default `database` store.
 - **Single post** — cached per id (`posts:show:{id}`) and cleared precisely when that post, or one of its comments, changes.
-- **Invalidation** is driven by `App\Observers\PostObserver` and `App\Observers\CommentObserver` (wired via `#[ObservedBy]` on the models), so it happens automatically on every create/update/delete regardless of which controller triggered it.
+- **Invalidation** is driven by `App\Observers\PostObserver` and `App\Observers\CommentObserver` (registered in `AppServiceProvider::boot()`), so it happens automatically on every create/update/delete regardless of which controller triggered it.
 - **Caching is done at the query layer, not on the HTTP response.** `PostResource` adds per-user fields (`can.update`, `can.delete`), so the transformation still runs on every request and authorization is never served stale or leaked between users. For the same reason the API responses are not given a shared `Cache-Control`.
 - For production, point `CACHE_STORE` at Redis; the layer is store-agnostic and needs no code change.
 
-## Deployment
+## Deployment (Docker)
 
-_(Docker setup to be added.)_
+The app is packaged as a single self-contained image — nginx, PHP-FPM and supervisor in one container — backed by SQLite, so it runs with one command:
+
+```bash
+docker compose up --build
+```
+
+- Blade UI: http://localhost:8080/posts
+- React SPA: http://localhost:8080/blog
+
+On first boot the entrypoint generates and persists `APP_KEY`, runs `php artisan migrate --force`, seeds sample data once, and caches config/routes/views. The SQLite file and the `storage/` tree live in the named volumes `db-data` and `storage-data`, so data survives restarts.
+
+Seeded admin login: `admin@example.com` / `AdminPass123!`
+
+### Switching to MySQL
+
+Add a `db` service (e.g. `mysql:8`) to `docker-compose.yml` and override the `DB_*` environment variables on the `app` service. No code change is needed.
