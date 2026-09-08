@@ -5,17 +5,11 @@ declare(strict_types=1);
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
-use Illuminate\View\View;
 
-Route::get('/', function (): RedirectResponse {
-    return redirect()->route('posts.index');
-});
+Route::redirect('/', '/posts');
 
-Route::get('/dashboard', function (): View {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::view('/dashboard', 'dashboard')->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function (): void {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -40,8 +34,6 @@ Route::post('/posts/{post}/comments', [CommentController::class, 'store'])
     ->middleware('throttle:posts-write')
     ->name('comments.store');
 
-Route::get('/blog/{any?}', function (): View {
-    return view('blog');
-})->where('any', '.*');
+Route::view('/blog/{any?}', 'blog')->where('any', '.*');
 
 require __DIR__.'/auth.php';

@@ -4,10 +4,14 @@ RUN apk add --no-cache \
         nginx \
         supervisor \
         sqlite \
-        unzip \
+        oniguruma \
+        libzip \
+    && apk add --no-cache --virtual .build-deps \
+        $PHPIZE_DEPS \
         oniguruma-dev \
         libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql pdo_sqlite bcmath opcache mbstring zip
+    && docker-php-ext-install bcmath opcache pdo_mysql mbstring zip \
+    && apk del .build-deps
 
 COPY --from=composer:2 /usr/bin/composer /usr/local/bin/composer
 
@@ -15,7 +19,7 @@ WORKDIR /var/www/html
 
 FROM base AS build
 
-RUN apk add --no-cache nodejs npm
+RUN apk add --no-cache git nodejs npm
 
 COPY composer.json composer.lock ./
 RUN composer install --no-scripts --no-autoloader --prefer-dist --no-interaction

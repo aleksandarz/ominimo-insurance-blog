@@ -3,12 +3,11 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\CurrentUserController;
 use App\Http\Controllers\Api\PostController;
-use App\Http\Resources\UserResource;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', fn (Request $request) => new UserResource($request->user()))->middleware('auth:sanctum');
+Route::get('/user', CurrentUserController::class)->middleware('auth:sanctum');
 
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{post}', [PostController::class, 'show']);
