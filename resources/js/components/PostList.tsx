@@ -4,11 +4,12 @@ import axios from 'axios';
 import { Paginated, Post } from '../types';
 import { takeFlash } from '../flash';
 import FlashMessage from './FlashMessage';
+import Pagination from './Pagination';
 
 export default function PostList() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [page, setPage] = useState(1);
-    const [lastPage, setLastPage] = useState(1);
+    const [meta, setMeta] = useState<Paginated<Post>['meta'] | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [notice, setNotice] = useState<string | null>(null);
@@ -23,7 +24,7 @@ export default function PostList() {
             .get<Paginated<Post>>('/api/posts', { params: { page } })
             .then((res) => {
                 setPosts(res.data.data);
-                setLastPage(res.data.meta.last_page);
+                setMeta(res.data.meta);
                 setError(null);
             })
             .catch(() => setError('Could not load posts. Please try again.'))
@@ -60,20 +61,15 @@ export default function PostList() {
                     </div>
                 ))}
 
-            {!loading && !error && lastPage > 1 && (
-                <div className="flex justify-center gap-1">
-                    {Array.from({ length: lastPage }, (_, i) => i + 1).map((target) => (
-                        <button
-                            key={target}
-                            onClick={() => goToPage(target)}
-                            className={`px-3 py-1 rounded text-sm ${
-                                target === page ? 'bg-gray-800 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'
-                            }`}
-                        >
-                            {target}
-                        </button>
-                    ))}
-                </div>
+            {!loading && !error && meta && (
+                <Pagination
+                    currentPage={meta.current_page}
+                    lastPage={meta.last_page}
+                    from={meta.from}
+                    to={meta.to}
+                    total={meta.total}
+                    onChange={goToPage}
+                />
             )}
         </div>
     );

@@ -38,6 +38,8 @@ export interface Paginated<T> {
     meta: {
         current_page: number;
         last_page: number;
+        from: number | null;
+        to: number | null;
         total: number;
     };
 }
