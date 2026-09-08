@@ -135,6 +135,7 @@ php artisan test
 - **Authorization logic** is centralized in `app/Policies/PostPolicy.php` and `app/Policies/CommentPolicy.php` — both the Blade and API controllers call the same policies, so authorization rules are defined once.
 - **React source** lives in `resources/js/`, entry point `app.tsx`, served from the `blog.blade.php` view.
 - **The post list is deliberately implemented twice** — server-rendered (`GET /posts`) and via the JSON API the SPA consumes (`GET /api/posts`). Since the React frontend was an optional add-on, both are kept to demonstrate the server-rendered and the API/SPA approaches. They run through the same form requests, policies, and `PostCache`.
+- **The Blade and React UIs are kept at behaviour parity** — the same flash messages, pagination, empty/error states, validation, route guards and navigation (Back / Back-to-top) — so the two approaches can be compared like for like.
 
 ## API
 
