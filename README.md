@@ -2,7 +2,7 @@
 
 A simple blog application built with Laravel, featuring authentication, full CRUD for posts, comments (including guest comments), and role-based authorization. Includes a React + TypeScript frontend integrated with a Laravel API.
 
-Built as part of the Ominimo Insurance BE developer interview assignment.
+> **Note — posts are rendered two ways, on purpose.** The same blog is served both as server-rendered Blade views at `/posts` and as a React + TypeScript single-page app (over a JSON API) at `/blog`. This is intentional: it lets the classic server-rendered approach and the API-driven SPA approach sit side by side against one backend, so both can be compared directly. The two paths share the same routes' backing logic — policies, form requests, validation rules, and the caching layer.
 
 ## Features
 
@@ -11,7 +11,7 @@ Built as part of the Ominimo Insurance BE developer interview assignment.
 - **Comments** — authenticated users and guests can comment; a comment can be deleted by its author, the post owner (moderation), or an admin
 - **Authorization** — enforced via Laravel Policies (`PostPolicy`, `CommentPolicy`) and route middleware
 - **Role-based access control** — an `admin` role can delete any post or comment
-- **Two frontends, on purpose** — the same blog is served both as server-rendered Blade views (`/posts`) and as a React + TypeScript SPA over a JSON API (`/blog`, Sanctum cookie auth). React was an optional part of the brief; both paths are kept so the classic server-rendered flow and the API-driven SPA flow can be seen side by side against one backend (shared policies, form requests, and cache layer).
+- **Two frontends, on purpose** — Blade views at `/posts` and a React + TypeScript SPA at `/blog` (Sanctum cookie auth); see the note near the top of this file.
 - **Caching** — a read-through cache layer (`app/Support/PostCache.php`) for the post feed and individual posts, invalidated by model observers (see [Caching](#caching) below)
 - **Tests** — PHPUnit (Unit + Feature) covering CRUD, validation, authorization, and cache invalidation
 
