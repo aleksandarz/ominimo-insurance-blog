@@ -4,15 +4,10 @@ declare(strict_types=1);
 
 namespace App\Models;
 
-use App\Observers\CommentObserver;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['comment', 'guest_name'])]
-#[ObservedBy(CommentObserver::class)]
 class Comment extends Model
 {
     use HasFactory;
@@ -20,6 +15,8 @@ class Comment extends Model
     const string TABLE = 'comments';
 
     protected $table = self::TABLE;
+
+    protected $fillable = ['comment', 'guest_name'];
 
     public function post(): BelongsTo
     {

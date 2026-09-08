@@ -33,7 +33,6 @@
                 @endcan
             </div>
 
-            {{-- Comments --}}
             <div class="bg-white p-6 shadow-sm sm:rounded-lg">
                 <h3 class="font-semibold text-lg text-gray-800 mb-4">
                     {{ __('Comments') }} ({{ $post->comments->count() }})
@@ -62,7 +61,6 @@
                     @endforelse
                 </div>
 
-                {{-- Add comment form --}}
                 <form method="POST" action="{{ route('comments.store', $post) }}" class="mt-6 space-y-4">
                     @csrf
 

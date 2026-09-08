@@ -133,10 +133,6 @@ return [
     | storage. By default, no PHP classes will be unserialized from your
     | cache to prevent gadget chain attacks if your APP_KEY is leaked.
     |
-    | The models below are allow-listed so App\Support\PostCache can store the
-    | post feed and post detail as Eloquent objects. Only the application's own
-    | models are listed — never `true`.
-    |
     */
 
     'serializable_classes' => [
